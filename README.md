@@ -55,3 +55,9 @@ fastapi run main.py
 ```bash
 ip addr show eth0 | grep inet | awk '{ print $2; }' | sed 's/\/.*$//'
 ```
+
+## Access the API docs
+In the API docs you'll find the endpoints and documentation on how to use them.
+```bash
+http://IP_ADDRESS:PORT/docs
+```
