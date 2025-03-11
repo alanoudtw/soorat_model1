@@ -12,7 +12,7 @@ app = FastAPI()
 
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
-
+  
 
 def calories_from_macro(protein, carbs, fat):
     return protein * 4 + carbs * 4 + fat * 9
@@ -101,13 +101,23 @@ async def independent(file: UploadFile = File(...), total_mass: float = Form(...
         return {"Error"}
         
 
+ image_url: str
+
 @app.post("/models/direct")
-async def direct(file: UploadFile = File(...)):
+async def direct(image: ImageRequest):
     try:
-        img = BytesIO(await file.read())
-        logger.info("Image received!!")
-        result = direct_prediction(img)
-        return jsonable_encoder(result)
+        # Download image from the given URL
+        response = requests.get(image.image_url)
+        if response.status_code != 200:
+            raise HTTPException(status_code=400, detail="Invalid image URL")
+
+        img = BytesIO(response.content)
+        print("Image received from URL!")
+
+        # Call your prediction function
+        result = direct_prediction(img)  # Replace with your actual function
+
+        return {"prediction": result}
     except Exception as e:
         return {"error": str(e)}
     
