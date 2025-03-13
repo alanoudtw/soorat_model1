@@ -1,4 +1,5 @@
-from fastapi import FastAPI, File, UploadFile, Form, Request
+from fastapi import FastAPI, File, UploadFile, Form
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.encoders import jsonable_encoder
 from PIL import Image
 import tensorflow as tf
@@ -9,6 +10,14 @@ import logging
 import os
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all domains
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all HTTP methods
+    allow_headers=["*"],  # Allows all headers
+)
+
 
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
@@ -101,7 +110,17 @@ async def independent(file: UploadFile = File(...), total_mass: float = Form(...
         return {"Error"}
         
 
-@app.post("/models/direct")
+@app.post("/models/direct") # Binary file
+async def direct(file: UploadFile = File(...)):
+    try:
+        img = BytesIO(await file.read())
+        logger.info("Image received!!")
+        result = direct_prediction(img)
+        return jsonable_encoder(result)
+    except Exception as e:
+        return {"error": str(e)}
+
+@app.post("/models/direct") # Multipart form
 async def direct(file: UploadFile = File(...)):
     try:
         img = BytesIO(await file.read())
