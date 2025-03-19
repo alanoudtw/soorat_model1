@@ -18,7 +18,7 @@ app.add_middleware(
     allow_headers=["*"],  # Allows all headers
 )
 
-
+path = "models/"
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
 
@@ -34,7 +34,7 @@ def direct_prediction(img):
     img = tf.expand_dims(img, axis=0)  # Add batch dimension
     
     # Load the model
-    model = tf.keras.models.load_model('models/direct_regression.h5')
+    model = tf.keras.models.load_model(path+'direct_regression.h5')
     # model = tf.keras.models.model_from_json(open('models/direct_regression.json').read())
 
     # Load the scalers
@@ -73,7 +73,7 @@ def direct_prediction(img):
 
 
 def independent_prediction(img, total_mass):
-    model = tf.keras.models.load_model('models/portion_independent.h5')
+    model = tf.keras.models.load_model(path+'portion_independent.h5')
     predictions = model.predict(img, verbose=0)
     protein = predictions['protein'][0][0] * total_mass
     fat = predictions['fat'][0][0] * total_mass
@@ -141,8 +141,15 @@ async def direct_demo():
         return {"error": str(e)}
 
 
-# Run setup.py to donwload the models
-os.system("python setup.py")
+
+# if "models" not exist
+if not os.path.exists("models"):
+    logger.info("No models found. Downloading models...")
+    os.system("python setup.py")
+    logger.info("Models downloaded.")
+    path = "/models/"
+else:
+    logger.info("Models already downloaded. (local)")
 
 
 # def test():
