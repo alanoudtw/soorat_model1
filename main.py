@@ -22,7 +22,6 @@ app.add_middleware(
 logger = logging.getLogger('uvicorn.error')
 logger.setLevel(logging.DEBUG)
 
-
 def calories_from_macro(protein, carbs, fat):
     return protein * 4 + carbs * 4 + fat * 9
 
@@ -141,6 +140,9 @@ async def direct_demo():
     except Exception as e:
         return {"error": str(e)}
 
+
+# Run setup.py to donwload the models
+os.system("python setup.py")
 
 
 # def test():
