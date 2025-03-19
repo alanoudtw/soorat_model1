@@ -6,11 +6,15 @@
       "nixpacksPlan": {
         "phases": {
             "addtionalProperties": {
-                "aptPkgs": ["wget"]
+                "aptPkgs": ["wget", "tar"],
+                "cmds": [
+                    "wget https://gitlab.com/davidblanar/nutrition5k/-/archive/main/nutrition5k-main.tar.gz?path=nutrition_model/models -O /models/models.tar.gz",
+                    "ls /models",
+                    "tar -xvzf /models/models.tar.gz -C /models --strip-components=3"
+                ]
             }
         }
-      },
-      "buildCommand": "wget https://gitlab.com/davidblanar/nutrition5k/-/archive/main/nutrition5k-main.tar.gz?path=nutrition_model/models -O /models/models.tar.gz && tar -xvzf /models/models.tar.gz -C /models --strip-components=3"
+      }
     },
     "deploy": {
       "startCommand": "fastapi run main.py --port \"$PORT\""
