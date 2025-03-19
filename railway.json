@@ -1,9 +1,18 @@
 {
     "$schema": "https://railway.app/railway.schema.json",
+    
     "build": {
-      "builder": "NIXPACKS"
+      "builder": "NIXPACKS",
+      "nixpacksPlan": {
+        "phases": {
+            "addtionalProperties": {
+                "aptPkgs": ["wget"]
+            }
+        }
+      },
+      "buildCommand": "wget https://gitlab.com/davidblanar/nutrition5k/-/archive/main/nutrition5k-main.tar.gz?path=nutrition_model/models -O /models/models.tar.gz && tar -xvzf /models/models.tar.gz -C /models --strip-components=3"
     },
     "deploy": {
       "startCommand": "fastapi run main.py --port \"$PORT\""
     }
-  }
+}
